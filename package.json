@@ -1,0 +1,28 @@
+{
+	"name": "@helpers/branche-delete",
+	"version": "0.0.1",
+	"description": "Delete Git Branches",
+	"main": "cli.js",
+	"scripts": {
+		"test": "test"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/silvandiepen/helpers-branche-delete.git"
+	},
+	"keywords": [
+		"delete",
+		"branch",
+		"git"
+	],
+	"author": "Sil van Diepen",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/silvandiepen/helpers-branche-delete/issues"
+	},
+	"homepage": "https://github.com/silvandiepen/helpers-branche-delete#readme",
+	"dependencies": {
+		"inquirer": "^7.0.4",
+		"simple-git": "^1.131.0"
+	}
+}
