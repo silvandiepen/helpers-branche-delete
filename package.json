@@ -22,7 +22,10 @@
 	},
 	"homepage": "https://github.com/silvandiepen/helpers-branche-delete#readme",
 	"dependencies": {
+		"enquirer": "^2.3.4",
 		"inquirer": "^7.0.4",
+		"kleur": "^3.0.3",
+		"prompts": "^2.3.0",
 		"simple-git": "^1.131.0"
 	}
 }

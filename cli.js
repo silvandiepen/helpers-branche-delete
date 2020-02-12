@@ -2,70 +2,62 @@
 "use strict";
 
 const git = require("simple-git/promise")();
-const inquirer = require("inquirer");
+const { MultiSelect } = require("enquirer");
+const { bold, red } = require("kleur");
 
 // Check if there are any branches
 const hasBranches = (summary) => {
 	const { all, current } = summary;
-
-	return !all || all === 0
-		? Promise.reject("[delete-branches] No branches found")
-		: { branches: all, current };
-};
-
-// Check if there are more tahn 1 branches
-const hasMultibranches = (summary) => {
-	const { branches, current } = summary;
-
-	return branches.length === 1
-		? Promise.reject("[delete-branches] You have only one branch")
-		: branches.filter((b) => b !== "master" && b !== current);
+	if (summary.all.length < 1) Promise.reject("No branches found");
+	else if (summary.all.length < 2) Promise.reject("You have only one branch");
+	else return { branches: all, current };
 };
 
 //
 const format = (branches) => {
-	return branches.reduce((list, name) => [...list, { name }], []);
+	let choices = [];
+	branches.branches.forEach((branch) => {
+		choices.push({
+			name: branch,
+			value: branch
+		});
+	});
+	return choices;
 };
 
-//
-const list = (choices) => {
-	return inquirer.prompt([
-		{
-			type: "checkbox",
-			name: "branches",
-			message: "Select branches you want to delete",
-			choices
-		}
-	]);
+const questions = async (choices) => {
+	const prompt = new MultiSelect({
+		name: "value",
+		message: "Which branches do you want to delete?",
+		choices: choices,
+		pointer: " → ",
+		indicator: "✕"
+	});
+
+	return prompt
+		.run()
+		.then((answer) => answer)
+		.catch(console.error);
 };
 
-const removeBranches = (values) => {
-	const { branches } = values;
-
-	if (!branches.length) return console.log("You didn't select any branches");
-
+const removeBranches = (branches) => {
+	if (!branches.length) return logg("You didn't select any branches");
 	branches.map((branch) => removeSingleBranch(branch));
 };
 
 const removeSingleBranch = (branch) => {
 	git.branch(["-D", branch]);
-	console.log(`branch: ${branch} deleted`);
+	logg(`${bold(branch)} ${red("deleted")}`);
 };
 
-const getBranches = async () => {
-	const branches = await git.branchLocal();
-	console.log(branches.branches);
+const logg = (msg) => {
+	console.log(`\n\t${msg}\n`);
 };
 
-getBranches();
-
-// console.log(git.branchLocal());
-
-// git
-// 	.branchLocal()
-// 	.then(hasBranches)
-// 	.then(hasMultibranches)
-// 	.then(format)
-// 	.then(list)
-// 	.then(removeBranches)
-// 	.catch(console.log);
+git
+	.branchLocal()
+	.then(hasBranches)
+	.then(format)
+	.then(questions)
+	.then(removeBranches)
+	.catch(logg);
