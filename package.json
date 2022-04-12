@@ -23,6 +23,6 @@
 	"homepage": "https://github.com/silvandiepen/helpers-branche-delete#readme",
 	"dependencies": {
 		"inquirer": "^7.0.4",
-		"simple-git": "^1.131.0"
+		"simple-git": "^3.5.0"
 	}
 }
